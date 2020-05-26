@@ -1,0 +1,13 @@
+# python
+Use python 3.7.
+Create a new virtual env:
+	python3.7 -m venv env
+activate it:
+	source env/bin/activate
+
+Then to get it to work:
+	pip install -r requirements.txt
+	pip install pandas
+	pip install tensorflow==1.15.0
+
+
