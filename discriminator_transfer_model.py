@@ -75,13 +75,15 @@ def create_model():
     bias_regularizer=regularizers.l2(l2regval)))
     model.add(LeakyReLU(alpha=0.1))
 
-    model.add(Dense(10, kernel_regularizer=regularizers.l2( l2regval),
+    model.add(Dense(15, kernel_regularizer=regularizers.l2( l2regval),
     bias_regularizer=regularizers.l2(l2regval)))
     model.add(LeakyReLU(alpha=0.1))
+    # model.add(Dropout(0.5))
 
-    model.add(Dense(10, kernel_regularizer=regularizers.l2( l2regval),
+    model.add(Dense(15, kernel_regularizer=regularizers.l2( l2regval),
     bias_regularizer=regularizers.l2(l2regval)))
     model.add(LeakyReLU(alpha=0.1))
+    # model.add(Dropout(0.5))
 
     model.add(Dense(1))
     model.add(Activation(activation="sigmoid"))
@@ -115,6 +117,7 @@ def train_model(batch_size = 10, nb_epoch = 20, train_loops=1, runsToTrainOn = [
         countNumFile.truncate()
     # model = load_model("model_discriminator_7.h5")
     model = create_model()
+    model.summary()
     old_model = load_model("model_discriminator_7.h5")
     # for ii in model.layers:
     #     ii.trainable = False
@@ -123,7 +126,10 @@ def train_model(batch_size = 10, nb_epoch = 20, train_loops=1, runsToTrainOn = [
     # model.layers[7].trainable = True
     model.layers[1].set_weights(old_model.layers[1].get_weights())
     model.layers[1].trainable = False
-    opt = Adam(lr=0.001*2, beta_1=0.9, beta_2=0.99)#SGD(lr=0.001, momentum=0.9)
+    #model.layers[3].set_weights(old_model.layers[3].get_weights())
+    #model.layers[3].trainable = False
+    # opt = SGD(lr=0.001, momentum=0.9) 
+    opt = Adam(lr=0.001*2, beta_1=0.9, beta_2=0.99) # 
     model.compile(loss='binary_crossentropy', optimizer=opt, metrics=['accuracy']) 
 
     # X_train, y_train, m_x, s_x, m_y, s_y = read_and_normalize_train_data(numToLoad=0,loadBackground=True)
@@ -143,7 +149,7 @@ def train_model(batch_size = 10, nb_epoch = 20, train_loops=1, runsToTrainOn = [
         X_valid_2 = None
 
 
-    append = '_disc_transfer_' + str(countNum) + '_layers_3_5_7_trainable'
+    append = '_disc_transfer_2_' + str(countNum) + '_layers_3_5_7_trainable'
     with open('mvalues'+append+'.txt', 'w') as f:
         f.write("m_x: %f, s_x: %f" % (m_x, s_x) )
 
@@ -177,7 +183,7 @@ def train_model(batch_size = 10, nb_epoch = 20, train_loops=1, runsToTrainOn = [
         plt.figure()
         plt.plot(accuracyHistory,label='train')
         plt.plot(valAccuracyHistory,label='dev')
-        plt.legend(loc="upper right")
+        plt.legend(loc="lower right")
         plt.yscale('log')
         plt.savefig('accuracy'+append+'.pdf')
         plt.close()
@@ -195,6 +201,6 @@ def train_model(batch_size = 10, nb_epoch = 20, train_loops=1, runsToTrainOn = [
 
     return model
 
-runsToTrainWith = ['833205', '833220', '833240', '833264']
+runsToTrainWith = ['833205', '833220', '833240', '833264', '833135', '833142', '833188', '833199']
 
 train_model(batch_size = 100, nb_epoch = 5, train_loops=200, runsToTrainOn = runsToTrainWith)
